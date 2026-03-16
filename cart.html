@@ -36,42 +36,34 @@ font-weight:600;
 color:#facc15;
 }
 
-/* NAVIGATION LINKS */
-.nav-links {
-display: flex;
-gap: 25px;
-align-items: center;
+.nav-links{
+display:flex;
+gap:25px;
 }
 
-.nav-links a {
-color: white;
-text-decoration: none;
-font-size: 16px;
-font-weight: 500;
-transition: color 0.3s ease;
+.nav-links a{
+color:white;
+text-decoration:none;
+font-size:16px;
 }
 
-.nav-links a:hover {
-color: #facc15; /* Yellow hover effect to match your logo */
+.nav-links a:hover{
+color:#facc15;
 }
 
-/* MAIN LAYOUT */
+/* MAIN */
 .container{
 display:flex;
 padding:40px;
 gap:40px;
 }
 
-/* CART LIST */
+/* BAG LIST */
 .cart-list{
-width:250px;
+width:260px;
 background:rgba(255,255,255,0.08);
 padding:20px;
 border-radius:12px;
-}
-
-.cart-list h3{
-margin-bottom:15px;
 }
 
 .cart-item{
@@ -80,14 +72,14 @@ margin-bottom:10px;
 border-radius:8px;
 background:rgba(255,255,255,0.15);
 cursor:pointer;
-transition:0.2s;
+display:flex;
+justify-content:space-between;
 }
 
 .cart-item:hover{
 background:rgba(255,255,255,0.25);
 }
 
-/* ADD CART */
 .add-cart{
 margin-top:15px;
 }
@@ -98,22 +90,10 @@ padding:10px;
 border:none;
 border-radius:6px;
 margin-top:5px;
-color: #333; 
+color:#333;
 }
 
-/* Default Button */
-button{
-margin-top:10px;
-padding:10px;
-width:100%;
-border:none;
-border-radius:20px;
-background:linear-gradient(45deg,#38bdf8,#9333ea);
-color:white;
-cursor:pointer;
-}
-
-/* PRODUCTS IN CART */
+/* CART CONTENT */
 .cart-content{
 flex:1;
 background:rgba(255,255,255,0.08);
@@ -131,14 +111,48 @@ border-radius:8px;
 margin-bottom:10px;
 }
 
-.remove-btn {
+.remove-btn{
+background:#ef4444;
+border:none;
+padding:6px 15px;
+border-radius:6px;
+color:white;
+cursor:pointer;
+/* FIX: Override global button styles so it stays compact */
 width: auto;
 margin-top: 0;
-padding: 6px 15px;
-background: #ef4444; 
-border-radius: 6px;
 }
 
+button{
+margin-top:10px;
+padding:10px;
+width:100%;
+border:none;
+border-radius:20px;
+background:linear-gradient(45deg,#38bdf8,#9333ea);
+color:white;
+cursor:pointer;
+}
+
+/* ADD ITEM UI */
+.add-item{
+display:flex;
+gap:10px;
+margin-bottom:20px;
+/* FIX: Vertically center the input and button */
+align-items: center; 
+}
+
+.add-item input{
+margin-top:0;
+}
+
+.add-item button{
+margin-top:0;
+width:150px;
+}
+
+/* CHECKOUT */
 .checkout{
 margin-top:20px;
 text-align:right;
@@ -146,23 +160,6 @@ text-align:right;
 
 .checkout button{
 width:200px;
-}
-
-/* ADD ITEM UI */
-.add-item-container {
-display: flex;
-gap: 10px;
-margin-bottom: 20px;
-display: none; 
-}
-
-.add-item-container input {
-margin-top: 0;
-}
-
-.add-item-container button {
-margin-top: 0;
-width: 150px;
 }
 
 </style>
@@ -173,8 +170,10 @@ width: 150px;
 <div class="navbar">
 <div class="logo">AI Powered Smart Shop</div>
 <div class="nav-links">
-    <a href="index.html">Home</a>
-    <a href="#" style="color: #facc15;">Cart</a> </div>
+<a href="index.html">Home</a>
+<a href="cart.html" style="color:#facc15;">Cart</a>
+<a href="login.html">Login</a>
+</div>
 </div>
 
 <div class="container">
@@ -190,16 +189,16 @@ width: 150px;
 </div>
 
 <div class="cart-content">
-<h2 id="currentCart" style="margin-bottom: 20px;">Select a Bag</h2>
+<h2 id="currentCart">Select a Bag</h2>
 
-<div class="add-item-container" id="addItemUI">
-<input type="text" id="productInput" placeholder="Enter product name...">
+<div class="add-item" id="addItemUI" style="display:none">
+<input type="text" id="productInput" placeholder="Enter product name">
 <button onclick="handleAddItem()">Add Item</button>
 </div>
 
 <div id="products"></div>
 
-<div class="checkout" id="checkoutUI" style="display: none;">
+<div class="checkout" id="checkoutUI" style="display:none">
 <button onclick="checkout()">Checkout</button>
 </div>
 </div>
@@ -207,66 +206,74 @@ width: 150px;
 </div>
 
 <script>
-let carts = {};
+/* LOAD CARTS FROM STORAGE */
+let carts = JSON.parse(localStorage.getItem("carts")) || {};
 let currentCart = null;
 
-/* CREATE CART */
-function createCart(){
-let name = document.getElementById("cartName").value.trim();
-if(name === "") return;
-if(carts[name]) {
-    alert("A bag with this name already exists!");
-    return;
+/* SAVE CARTS */
+function saveCarts(){
+localStorage.setItem("carts", JSON.stringify(carts));
 }
 
-carts[name] = [];
-currentCart = name;
+/* CREATE BAG */
+function createCart(){
+let name=document.getElementById("cartName").value.trim();
+if(name==="") return;
+
+if(carts[name]){
+alert("Bag already exists");
+return;
+}
+
+carts[name]=[];
+currentCart=name;
 document.getElementById("cartName").value="";
 
+saveCarts();
 renderCarts();
 renderProducts();
 }
 
-/* DISPLAY CARTS */
+/* DISPLAY BAGS */
 function renderCarts(){
-let cartNames = document.getElementById("cartNames");
-cartNames.innerHTML="";
+let container=document.getElementById("cartNames");
+container.innerHTML="";
 
 for(let cart in carts){
 let div=document.createElement("div");
 div.className="cart-item";
-div.innerText=cart;
+div.innerHTML=`${cart} <span>${carts[cart].length}</span>`;
 div.onclick=function(){
 currentCart=cart;
 renderProducts();
 }
-cartNames.appendChild(div);
+container.appendChild(div);
 }
 }
 
 /* DISPLAY PRODUCTS */
 function renderProducts(){
-let container = document.getElementById("products");
-let addItemUI = document.getElementById("addItemUI");
-let checkoutUI = document.getElementById("checkoutUI");
+let container=document.getElementById("products");
+let addUI=document.getElementById("addItemUI");
+let checkoutUI=document.getElementById("checkoutUI");
 
 container.innerHTML="";
 
 if(!currentCart){
 document.getElementById("currentCart").innerText="Select a Bag";
-addItemUI.style.display = "none";
-checkoutUI.style.display = "none";
+addUI.style.display="none";
+checkoutUI.style.display="none";
 return;
 }
 
-document.getElementById("currentCart").innerText="Bag: " + currentCart;
-addItemUI.style.display = "flex";
-checkoutUI.style.display = "block";
+document.getElementById("currentCart").innerText="Bag: "+currentCart;
+addUI.style.display="flex";
+checkoutUI.style.display="block";
 
 let items=carts[currentCart];
 
-if(items.length === 0) {
-container.innerHTML = "<p style='opacity: 0.7;'>This bag is empty.</p>";
+if(items.length===0){
+container.innerHTML="<p style='opacity:0.7'>This bag is empty</p>";
 }
 
 items.forEach((p,index)=>{
@@ -277,40 +284,44 @@ container.appendChild(div);
 });
 }
 
-/* HANDLE ADD ITEM FROM UI */
-function handleAddItem() {
-let productInput = document.getElementById("productInput");
-let product = productInput.value.trim();
-if(product !== "") {
-addItem(product);
-productInput.value = "";
-}
-}
-
 /* ADD ITEM */
-function addItem(product){
-if(!currentCart) return;
+function handleAddItem(){
+let product=document.getElementById("productInput").value.trim();
+if(product==="") return;
+
 carts[currentCart].push(product);
+document.getElementById("productInput").value="";
+
+saveCarts();
 renderProducts();
+renderCarts();
 }
 
-/* REMOVE */
+/* REMOVE ITEM */
 function removeItem(index){
 carts[currentCart].splice(index,1);
+saveCarts();
 renderProducts();
+renderCarts();
 }
 
 /* CHECKOUT */
 function checkout(){
-if(!currentCart || carts[currentCart].length===0){
+if(carts[currentCart].length===0){
 alert("Cart is empty");
 return;
 }
-alert("Order placed from " + currentCart);
+alert("Order placed from "+currentCart);
 carts[currentCart]=[];
+
+saveCarts();
 renderProducts();
+renderCarts();
 }
 
+/* LOAD EXISTING BAGS */
+renderCarts();
 </script>
+
 </body>
 </html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Login | AI Powered Smart Shop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#0f172a,#1e3a8a,#9333ea);
+overflow:hidden;
+color:white;
+}
+
+/* background circles */
+.circle1{
+position:absolute;
+width:300px;
+height:300px;
+background:#38bdf8;
+border-radius:50%;
+top:-80px;
+left:-80px;
+filter:blur(100px);
+}
+
+.circle2{
+position:absolute;
+width:350px;
+height:350px;
+background:#facc15;
+border-radius:50%;
+bottom:-120px;
+right:-120px;
+filter:blur(120px);
+}
+
+/* NAVBAR & LOGO */
+.navbar {
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 30px 60px;
+z-index: 20; /* Ensures the navbar stays above the blurred background circles */
+}
+
+.logo{
+font-size:28px;
+font-weight:600;
+color:#facc15;
+}
+
+/* NAVIGATION LINKS */
+.nav-links {
+display: flex;
+gap: 25px;
+align-items: center;
+}
+
+.nav-links a {
+color: white;
+text-decoration: none;
+font-size: 16px;
+font-weight: 500;
+transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+color: #facc15; 
+}
+
+/* glass card */
+.container{
+width:360px;
+padding:40px;
+border-radius:15px;
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(12px);
+box-shadow:0 15px 35px rgba(0,0,0,0.4);
+text-align:center;
+transition:0.4s;
+position: relative; 
+z-index: 10;
+}
+
+/* headings */
+h2{
+margin-bottom:20px;
+}
+
+/* input fields */
+input{
+width:100%;
+padding:12px;
+margin:10px 0;
+border:none;
+border-radius:8px;
+outline:none;
+color: #333; 
+}
+
+/* button */
+button{
+width:100%;
+padding:12px;
+margin-top:15px;
+border:none;
+border-radius:25px;
+background:linear-gradient(45deg,#38bdf8,#9333ea);
+color:white;
+font-size:16px;
+cursor:pointer;
+transition:0.3s;
+}
+
+button:hover{
+transform:scale(1.05);
+}
+
+/* switch text */
+.switch{
+margin-top:15px;
+font-size:14px;
+}
+
+.switch span{
+color:#facc15;
+cursor:pointer;
+}
+
+/* hidden */
+.hidden{
+display:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="circle1"></div>
+<div class="circle2"></div>
+
+<div class="navbar">
+    <div class="logo">AI Powered Smart Shop</div>
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="#" style="color: #facc15;">Login</a>
+    </div>
+</div>
+
+<div class="container">
+
+<div id="login">
+<h2>Welcome Back</h2>
+<input type="email" placeholder="Email">
+<input type="password" placeholder="Password">
+<button>Login</button>
+<p class="switch">
+Don't have an account?
+<span onclick="showSignup()">Sign Up</span>
+</p>
+</div>
+
+<div id="signup" class="hidden">
+<h2>Create Account</h2>
+<input type="text" placeholder="Full Name">
+<input type="email" placeholder="Email">
+<input type="password" placeholder="Password">
+<button>Sign Up</button>
+<p class="switch">
+Already have an account?
+<span onclick="showLogin()">Login</span>
+</p>
+</div>
+
+</div>
+
+<script>
+function showSignup(){
+document.getElementById("login").classList.add("hidden");
+document.getElementById("signup").classList.remove("hidden");
+}
+
+function showLogin(){
+document.getElementById("signup").classList.add("hidden");
+document.getElementById("login").classList.remove("hidden");
+}
+</script>
+
+</body>
+</html>
